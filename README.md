@@ -2,20 +2,20 @@
 
 # Enterprise LAN Infrastructure: Inter-VLAN Routing, VLSM, and STP Security
 
-## 📌 Project Overview
+## Project Overview
 This project demonstrates the design and implementation of a secure, subnetted enterprise Local Area Network (LAN) using Cisco infrastructure. It showcases advanced Layer 2 and Layer 3 networking concepts, including Variable Length Subnet Masking (VLSM), Inter-VLAN routing via a Distribution Switch (DSW), and Spanning Tree Protocol (STP) hardening techniques to ensure network reliability and security.
 
-## 🛠️ Technologies & Features Demonstrated
+## Technologies & Features Demonstrated
 *   **Layer 3 Switching / Inter-VLAN Routing:** Configured Switch Virtual Interfaces (SVIs) on the Distribution Switch (DSW) for efficient routing between departments.
 *   **VLSM Subnetting:** Optimized IP address allocation to minimize host wastage across multiple VLANs.
 *   **STP Toolkit Security:** Hardened the Access Layer (ASW) using **PortFast** for immediate host connectivity and **BPDU Guard** to prevent unauthorized switch attachments and loop injections.
 *   **Static Routing / IP Route:** Implemented predictable static routing paths to simulate upstream or WAN connectivity.
 
-## 📐 Network Topology & Design
+## Network Topology & Design
 
 
 
-### 📊 VLSM Subnetting Scheme
+### VLSM Subnetting Scheme
 The network uses the base network `192.168.1.0/24` (or your chosen subnet), partitioned via VLSM to accommodate varying host requirements:
 
 | VLAN ID | Department| Required Hosts | Subnet Address | Subnet Mask | Default Gateway |
@@ -26,7 +26,7 @@ The network uses the base network `192.168.1.0/24` (or your chosen subnet), part
 
 ---
 
-## 💻 Configuration Highlights
+##  Configuration Highlights
 
 ### 1. Access Layer Security (ASW1)
 Configured edge ports to ensure rapid user connection while strictly enforcing topology boundaries using the STP Toolkit.
@@ -56,14 +56,14 @@ interface Vlan 30
 
 ---
 
-## 🔍 Verification & Testing
+##  Verification & Testing
 To confirm structural integrity, the following Cisco IOS verification commands were executed:
 *   `show vlan brief`: Verified all edge ports are successfully tracking their assigned active VLANs.
 *   `show spanning-tree summary`: Confirmed PortFast and BPDU Guard are globally or interface-actively monitoring the network edge.
 *   `show ip route`: Verified the routing table on the DSW populated all connected SVI networks and static paths correctly.
 *   **End-to-End Ping Tests:** Executed successful cross-VLAN ICMP pings between hosts to validate Inter-VLAN functionality.
 
-## 🚀 How to Run This Project
+##  How to Run This Project
 1. Clone this repository.
 2. Open the included `.pkt` (Packet Tracer).
 3. Review the sanitized text configuration files in the `/configs` directory.
