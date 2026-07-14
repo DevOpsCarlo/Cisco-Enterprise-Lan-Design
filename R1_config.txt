@@ -1,0 +1,58 @@
+! ==============================================================================
+! PORTFOLIO LAB: ENTERPRISE LAN INFRASTRUCTURE
+! DEVICE: ROUTER 1 (R1)
+! ROLE: Layer 3 Edge/Core Router - WAN Gateway & Static Route Back-haul
+! ==============================================================================
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname R1
+!
+! [ROUTING CAPABILITIES]
+! Cisco Express Forwarding (CEF) enabled for high-speed packet switching
+ip cef
+no ipv6 cef
+!
+! [LICENSE MANAGEMENT]
+! Sanitized hardware Universal Device Identifier (UDI) serial number for security
+license udi pid CISCO1941/K9 sn <SANITIZED_REMOVED_FOR_PORTFOLIO>
+!
+! [ACTIVE INTERFACE - DOWNLINK TO LAN]
+! Connects directly to the DSW1 multilayer switch using a /30 transit network
+interface GigabitEthernet0/0
+ description ## TO DSW1 ##
+ ip address 192.168.1.130 255.255.255.252
+ duplex auto
+ speed auto
+!
+! [UNUSED INTERFACES & HARDENING]
+interface GigabitEthernet0/1
+ description ## NOT IN USE ##
+ no ip address
+ speed auto
+ duplex auto
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+! [STATIC ROUTING & DATA BACK-HAUL]
+! Rationale: Summarized static route pointing the entire 192.168.1.0/24 space 
+! back to the DSW1 interface (192.168.1.129) so return traffic finds the subnets.
+ip classless
+ip route 192.168.1.0 255.255.255.0 192.168.1.129
+!
+! [SYSTEM PERFORMANCE]
+ip flow-export version 9
+!
+! [LINE CONFIGURATION]
+line con 0
+line aux 0
+line vty 0 4
+ login
+!
+end

@@ -1,0 +1,95 @@
+! ==============================================================================
+! PORTFOLIO LAB: ENTERPRISE LAN INFRASTRUCTURE
+! DEVICE: DISTRIBUTION SWITCH 1 (DSW1)
+! ROLE: Layer 3 Distribution Layer - Inter-VLAN Routing & Gateway Control
+! ==============================================================================
+!
+hostname DSW1
+!
+! [SPANNING TREE PROTOCOL]
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+! [ACTIVE ACCESS INTERFACES: VLAN 10]
+! Local access ports assigned to VLAN 10 with edge port optimization
+interface range FastEthernet0/1 - 2
+ switchport mode access
+ switchport access vlan 10
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+! [ACTIVE ACCESS INTERFACES: VLAN 30]
+! Local access ports assigned to VLAN 30 with edge port optimization
+interface range FastEthernet0/3 - 4
+ switchport mode access
+ switchport access vlan 30
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+! [SWITCH PORT HARDENING: UNUSED INTERFACES]
+! Rationale: Isolating all unused access ports inside a non-routing blackhole 
+! VLAN (VLAN 1001) and forcing them down to secure the physical layer.
+interface range FastEthernet0/5 - 24
+ description ## NOT IN USE ##
+ switchport mode access
+ switchport access vlan 1001
+ shutdown
+!
+! [INTER-SWITCH TRUNK LINK]
+! Trunk link configured to carry local VLANs down to the Access Layer (ASW1)
+interface GigabitEthernet0/1
+ description ## TO ASW1 ##
+ switchport trunk native vlan 1001
+ switchport trunk allowed vlan 10,20,30
+ spanning-tree portfast disable
+!
+! [UPSTREAM ROUTED PORT]
+! Point-to-point /30 subnet link connecting directly to the Edge/Core Router
+interface GigabitEthernet0/2
+ no switchport
+ description ## TO R1 ##
+ ip address 192.168.1.129 255.255.255.252
+ speed auto
+ max-speed auto
+ duplex auto
+ spanning-tree portfast disable
+!
+! [DEFAULT MANAGEMENT INTERFACE]
+interface Vlan1
+ no ip address
+ shutdown
+!
+! [INTER-VLAN ROUTING - SVIs (VLSM GATEWAYS)]
+! Rationale: Configured core SVIs acting as the Default Gateways for local subnets.
+! Subnet masks reflect the calculated VLSM structure to optimize IP utilization.
+!
+! Subnet: 192.168.1.0/26 (Hosts: .1 to .62)
+interface Vlan10
+ description ## GATEWAY FOR VLAN 10 ENGINEERING ##
+ ip address 192.168.1.62 255.255.255.192
+!
+! Subnet: 192.168.1.64/27 (Hosts: .65 to .94)
+interface Vlan20
+ description ## GATEWAY FOR VLAN 20 HR ##
+ ip address 192.168.1.94 255.255.255.224
+!
+! Subnet: 192.168.1.96/27 (Hosts: .97 to .126)
+interface Vlan30
+ description ## GATE FOR VLAN 30 SALES ##
+ ip address 192.168.1.126 255.255.255.224
+!
+! [STATIC ROUTING]
+! Default static route tracking all non-local traffic to the upstream next-hop router
+ip classless
+ip route 0.0.0.0 0.0.0.0 192.168.1.130
+!
+! [SYSTEM PERFORMANCE]
+ip flow-export version 9
+!
+! [LINE CONFIGURATION]
+line con 0
+line aux 0
+line vty 0 4
+ login
+!
+end
