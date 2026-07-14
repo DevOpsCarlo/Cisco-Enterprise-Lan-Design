@@ -12,7 +12,7 @@ This project demonstrates the design and implementation of a secure, subnetted e
 *   **Static Routing / IP Route:** Implemented predictable static routing paths to simulate upstream or WAN connectivity.
 
 ## Network Topology & Design
-
+download the "Cisco-Enterprise-LAN-Design.pkz" to view the topology diagram.
 
 
 ### VLSM Subnetting Scheme
